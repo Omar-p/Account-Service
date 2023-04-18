@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,7 +40,7 @@ class RegistrationControllerTest {
         BDDMockito.given(registrationService.register(BDDMockito.any(RegistrationRequest.class)))
                 .willReturn(new RegistrationResponse("John", "Doe", "johndoe@acme.com"));
 
-        mvc.perform(RestDocumentationRequestBuilders.post("/api/auth/signup")
+        mvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -67,4 +68,21 @@ class RegistrationControllerTest {
                         )
                 );
     }
+
+    @Test
+    void givenInvalidRegistrationRequestItShouldReturn400() throws Exception {
+
+        mvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                   "name": "",
+                                   "email": "",
+                                   "password": "22"
+                                }"""
+                        ))
+                .andExpect(status().isBadRequest())
+                .andDo(document("registration-invalid"));
+    }
+
 }
