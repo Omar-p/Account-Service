@@ -82,6 +82,10 @@ class RegistrationControllerTest {
                                 }"""
                         ))
                 .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastname").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.password").exists())
                 .andDo(document("registration-invalid"));
     }
 
