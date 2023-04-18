@@ -1,6 +1,7 @@
 package com.example.accountservice.registration;
 
 import com.example.accountservice.config.SecurityConfig;
+import com.example.accountservice.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(RegistrationController.class)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, GlobalExceptionHandler.class})
 @MockitoSettings
 class RegistrationControllerTest {
 
@@ -78,14 +79,11 @@ class RegistrationControllerTest {
                                 {
                                    "name": "",
                                    "email": "",
-                                   "password": "22"
+                                   "password": ""
                                 }"""
                         ))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastname").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.password").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", org.hamcrest.Matchers.hasSize(5)))
                 .andDo(document("registration-invalid"));
     }
 
