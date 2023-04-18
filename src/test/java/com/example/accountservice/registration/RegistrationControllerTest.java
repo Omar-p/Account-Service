@@ -2,10 +2,13 @@ package com.example.accountservice.registration;
 
 import com.example.accountservice.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -21,13 +24,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Import(SecurityConfig.class)
+@MockitoSettings
 class RegistrationControllerTest {
 
     @Autowired
     MockMvc mvc;
 
+    @MockBean
+    RegistrationService registrationService;
+
     @Test
     void givenValidRegistrationRequestItShouldReturn200WithUserInfo() throws Exception {
+
+        BDDMockito.given(registrationService.register(BDDMockito.any(RegistrationRequest.class)))
+                .willReturn(new RegistrationResponse("John", "Doe", "johndoe@acme.com"));
+
         mvc.perform(RestDocumentationRequestBuilders.post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -43,12 +54,13 @@ class RegistrationControllerTest {
                         {
                            "name": "John",
                            "lastname": "Doe",
-                           "email": "johndoe@acme.com",
+                           "email": "johndoe@acme.com"
                         }
                         """))
                 .andDo(document("registration",
                                 requestFields(
                                         fieldWithPath("name").description("String value, not empty"),
+                                        fieldWithPath("lastname").description("String value, not empty"),
                                         fieldWithPath("email").description("String value, not empty"),
                                         fieldWithPath("password").description("String value, not empty")
                                 )
