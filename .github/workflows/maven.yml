@@ -40,8 +40,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build Container image
-        run: ./mvnw -DskipTests=true clean package spring-boot:build-image \ 
-          -Dspring-boot.build-image.imageName=${{ env.REGISTRY_USERNAME }}/$IMAGE_NAME:${{ github.sha }}
+        run: |
+          ./mvnw -DskipTests=true clean package spring-boot:build-image \
+           -Dspring-boot.build-image.imageName=${{ env.REGISTRY_USERNAME }}/$IMAGE_NAME:${{ github.sha }}
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Publish Docker image
