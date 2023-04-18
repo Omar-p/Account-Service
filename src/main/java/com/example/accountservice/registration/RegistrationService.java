@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
 
     public RegistrationResponse register(RegistrationRequest request) {
-        return new RegistrationResponse(request.name(), request.lastName(), request.email());
+        return new RegistrationResponse(request.name(), request.lastname(), request.email());
     }
 }
