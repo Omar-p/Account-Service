@@ -103,7 +103,7 @@ class RegistrationControllerTest {
                                    }"""
                         ))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email", is("Email must belong to acme.com domain")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email[0]", is("Email must belong to acme.com domain")));
     }
 
 }
