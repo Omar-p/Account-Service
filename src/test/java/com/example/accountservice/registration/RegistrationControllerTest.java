@@ -20,6 +20,8 @@ import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,7 +63,7 @@ class RegistrationControllerTest {
                            "email": "johndoe@acme.com"
                         }
                         """))
-                .andDo(document("registration",
+                .andDo(document("registration", preprocessResponse(prettyPrint()),
                                 requestFields(
                                         fieldWithPath("name").description("String value, not empty"),
                                         fieldWithPath("lastname").description("String value, not empty"),
@@ -86,7 +88,7 @@ class RegistrationControllerTest {
                         ))
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", aMapWithSize(4)))
-                .andDo(document("registration-invalid"));
+                .andDo(document("registration-invalid", preprocessResponse(prettyPrint())));
     }
 
     @Test
@@ -95,15 +97,16 @@ class RegistrationControllerTest {
         mvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                   "name": "John",
-                                   "lastname": "Doe",
-                                   "email": "aa@aaa.com",
-                                   "password": "secret"
-                                   }"""
+                            {
+                               "name": "John",
+                               "lastname": "Doe",
+                               "email": "aa@aaa.com",
+                               "password": "secret"
+                            }"""
                         ))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email[0]", is("Email must belong to acme.com domain")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email[0]", is("Email must belong to acme.com domain")))
+                .andDo(document("registration-with-email-from-non-acme-domain", preprocessResponse(prettyPrint())));
     }
 
 }
