@@ -1,0 +1,36 @@
+# Accounts Service
+
+Registration
+
+
+.request
+include::{snippets}/registration/http-request.adoc[]
+
+.response
+include::{snippets}/registration/http-response.adoc[]
+
+'''
+
+Request Fields
+include::{snippets}/registration/request-fields.adoc[]
+
+'''
+
+Registration With Invalid data
+
+.request
+include::{snippets}/registration-invalid/http-request.adoc[]
+
+.response
+include::{snippets}/registration-invalid/http-response.adoc[]
+
+'''
+
+Registration With Email From Other Domain
+
+.request
+include::{snippets}/registration-with-email-from-non-acme-domain/http-request.adoc[]
+
+.response
+include::{snippets}/registration-with-email-from-non-acme-domain/http-response.adoc[]
+
