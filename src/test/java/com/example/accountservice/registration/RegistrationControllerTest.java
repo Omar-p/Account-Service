@@ -109,4 +109,22 @@ class RegistrationControllerTest {
                 .andDo(document("registration-with-email-from-non-acme-domain", preprocessResponse(prettyPrint())));
     }
 
+    @Test
+    void givenEmailBelongToAcmeDomainButNotValidItShouldReturn400() throws Exception {
+
+        mvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                               "name": "John",
+                               "lastname": "Doe",
+                               "email": "@acme.com",
+                               "password": "secret"
+                           }"""
+                        ))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email[0]", is("must be a well-formed email address")))
+                .andDo(document("registration-with-email-from-acme-domain-but-not-valid", preprocessResponse(prettyPrint())));
+        }
+
 }
