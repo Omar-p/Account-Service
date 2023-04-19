@@ -31,25 +31,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorDetails> handleRegistrationWithAnotherEmail(Exception ex, HttpServletRequest request) {
-        var errorDetails = new ErrorDetails(
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getRequestURI()
-        );
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(BreachedPasswordException.class)
-    public ResponseEntity<ErrorDetails> handleRegistrationWithBreachedPassword(Exception ex, HttpServletRequest request) {
-        var errorDetails = new ErrorDetails(
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getRequestURI()
-        );
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
 }
