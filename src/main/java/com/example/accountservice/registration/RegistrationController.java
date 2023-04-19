@@ -17,38 +17,38 @@ import java.time.LocalDateTime;
 @RestController
 public class RegistrationController {
 
-    private final RegistrationService registrationService;
+  private final RegistrationService registrationService;
 
 
-    public RegistrationController(RegistrationService registrationService) {
-        this.registrationService = registrationService;
-    }
+  public RegistrationController(RegistrationService registrationService) {
+    this.registrationService = registrationService;
+  }
 
-    @PostMapping("/api/auth/signup")
-    public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegistrationRequest request) {
-        return ResponseEntity.ok(registrationService.register(request));
-    }
+  @PostMapping("/api/auth/signup")
+  public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegistrationRequest request) {
+    return ResponseEntity.ok(registrationService.register(request));
+  }
 
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorDetails> handleRegistrationWithAnotherEmail(Exception ex, HttpServletRequest request) {
-        var errorDetails = new ErrorDetails(
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getRequestURI()
-        );
+  @ExceptionHandler(UserAlreadyExistsException.class)
+  public ResponseEntity<ErrorDetails> handleRegistrationWithAnotherEmail(Exception ex, HttpServletRequest request) {
+    var errorDetails = new ErrorDetails(
+        ex.getMessage(),
+        LocalDateTime.now(),
+        request.getRequestURI()
+    );
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
-    }
+    return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+  }
 
-    @ExceptionHandler(BreachedPasswordException.class)
-    public ResponseEntity<ErrorDetails> handleRegistrationWithBreachedPassword(Exception ex, HttpServletRequest request) {
-        var errorDetails = new ErrorDetails(
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getRequestURI()
-        );
+  @ExceptionHandler(BreachedPasswordException.class)
+  public ResponseEntity<ErrorDetails> handleRegistrationWithBreachedPassword(Exception ex, HttpServletRequest request) {
+    var errorDetails = new ErrorDetails(
+        ex.getMessage(),
+        LocalDateTime.now(),
+        request.getRequestURI()
+    );
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+  }
 }

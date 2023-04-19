@@ -16,14 +16,14 @@ class PasswordValidatorTest {
   @Test
   void givenBreachedPasswordItShouldThrowException() {
     BDDAssertions.assertThatThrownBy(() -> passwordValidator.checkIfPasswordBreached("PasswordForApril"))
-            .isInstanceOf(BreachedPasswordException.class)
-            .hasMessage("Password is breached");
+        .isInstanceOf(BreachedPasswordException.class)
+        .hasMessage("Password is breached");
   }
 
   @Test
   void givenNotBreachedPasswordItShouldNotThrowException() {
     BDDAssertions.assertThatNoException()
-            .isThrownBy(() -> passwordValidator.checkIfPasswordBreached("PasswordForMay1"));
+        .isThrownBy(() -> passwordValidator.checkIfPasswordBreached("PasswordForMay1"));
   }
 
 }
