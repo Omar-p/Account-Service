@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
@@ -22,13 +20,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        var errorList = ex.getFieldErrors().stream()
-                .map(fieldError -> {
-                    Map<String, String > errorMap = new HashMap<>();
-                    errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
-                    return errorMap;
-                }).collect(toList());
+        final Map<String, List<String>> errorMap = new HashMap<>();
+        ex.getFieldErrors()
+                .forEach(fieldError -> {
+                    var list = errorMap.getOrDefault(fieldError.getField(), new ArrayList<>());
+                    list.add(fieldError.getDefaultMessage());
+                    errorMap.put(fieldError.getField(), list);
+                });
 
-        return new ResponseEntity<>(errorList, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }
 }
