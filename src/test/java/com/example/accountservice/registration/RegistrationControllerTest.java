@@ -1,7 +1,9 @@
 package com.example.accountservice.registration;
 
 import com.example.accountservice.config.SecurityConfig;
+import com.example.accountservice.exception.BreachedPasswordException;
 import com.example.accountservice.exception.GlobalExceptionHandler;
+import com.example.accountservice.exception.UserAlreadyExistsException;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -24,7 +26,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RegistrationController.class)
 @AutoConfigureMockMvc
@@ -39,6 +41,15 @@ class RegistrationControllerTest {
     @MockBean
     RegistrationService registrationService;
 
+    private final String validRequest = """
+                                {
+                                   "name": "John",
+                                   "lastname": "Doe",
+                                   "email": "johndoe@acme.com",
+                                   "password": "secretsecretsecret"
+                                }
+                                """;
+
     @Test
     void givenValidRegistrationRequestItShouldReturn200WithUserInfo() throws Exception {
 
@@ -47,14 +58,7 @@ class RegistrationControllerTest {
 
         mvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                   "name": "John",
-                                   "lastname": "Doe",
-                                   "email": "johndoe@acme.com",
-                                   "password": "secret"
-                                }
-                                """))
+                        .content(validRequest))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json("""
                         {
@@ -87,7 +91,7 @@ class RegistrationControllerTest {
                                 }"""
                         ))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", aMapWithSize(4)))
+                .andExpect(jsonPath("$", aMapWithSize(4)))
                 .andDo(document("registration-invalid", preprocessResponse(prettyPrint())));
     }
 
@@ -105,7 +109,7 @@ class RegistrationControllerTest {
                             }"""
                         ))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email[0]", is("Email must belong to acme.com domain")))
+                .andExpect(jsonPath("$.email[0]", is("Email must belong to acme.com domain")))
                 .andDo(document("registration-with-email-from-non-acme-domain", preprocessResponse(prettyPrint())));
     }
 
@@ -123,8 +127,37 @@ class RegistrationControllerTest {
                            }"""
                         ))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email[0]", is("must be a well-formed email address")))
+                .andExpect(jsonPath("$.email[0]", is("must be a well-formed email address")))
                 .andDo(document("registration-with-email-from-acme-domain-but-not-valid", preprocessResponse(prettyPrint())));
         }
+
+    @Test
+    void givenRegistrationRequestWithAlreadyExistingEmailShouldReturn409() throws Exception {
+
+        String email = "johndoe@acme.com";
+        BDDMockito.given(registrationService.register(BDDMockito.any(RegistrationRequest.class)))
+                .willThrow(new UserAlreadyExistsException("User with email " + email + " already exists"));
+
+        mvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRequest))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message", is("User with email " + email + " already exists")))
+                .andDo(document("registration-with-already-existing-email", preprocessResponse(prettyPrint())));
+    }
+
+    @Test
+    void givenRegistrationRequestWithBreachedPasswordShouldReturn400() throws Exception {
+
+        BDDMockito.given(registrationService.register(BDDMockito.any(RegistrationRequest.class)))
+                .willThrow(new BreachedPasswordException("Password is breached"));
+
+        mvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", is("Password is breached")))
+                .andDo(document("registration-with-breached-password", preprocessResponse(prettyPrint())));
+    }
 
 }
