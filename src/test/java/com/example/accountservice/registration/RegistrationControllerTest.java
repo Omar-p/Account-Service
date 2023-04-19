@@ -89,6 +89,21 @@ class RegistrationControllerTest {
                 .andDo(document("registration-invalid"));
     }
 
+    @Test
+    void givenEmailNotBelongingToAcmeDomainItShouldReturn400() throws Exception {
 
+        mvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                   "name": "John",
+                                   "lastname": "Doe",
+                                   "email": "aa@aaa.com",
+                                   "password": "secret"
+                                   }"""
+                        ))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email", is("Email must belong to acme.com domain")));
+    }
 
 }
