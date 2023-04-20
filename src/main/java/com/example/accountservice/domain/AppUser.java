@@ -9,7 +9,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "app_user")
+@Table(
+  name = "app_user",
+  uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"email"})
+    }
+)
 public class AppUser {
 
   @Id
@@ -24,5 +29,9 @@ public class AppUser {
   private Long id;
 
   private String email;
+
+  private String name;
+
+  private String lastname;
 
 }
