@@ -31,7 +31,9 @@ public class SecurityUser implements UserDetails {
   private boolean enabled;
 
   @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "app_user_id", referencedColumnName = "id")
+  @JoinColumn(name = "app_user_id", referencedColumnName = "id",
+      foreignKey = @ForeignKey(name = "security_user_app_user_id_fkey")
+  )
   private AppUser appUser;
 
 
@@ -39,9 +41,10 @@ public class SecurityUser implements UserDetails {
   @JoinTable(
     name = "user_role",
     joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "role_id")
+    inverseJoinColumns = @JoinColumn(name = "role_id"),
+    foreignKey = @ForeignKey(name = "user_role_user_id_fkey"),
+    inverseForeignKey = @ForeignKey(name = "user_role_role_id_fkey")
   )
-  @Builder.Default
   private Set<Role> roles = new HashSet<>();
 
   @Override

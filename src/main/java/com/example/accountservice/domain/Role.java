@@ -14,7 +14,7 @@ import java.util.Set;
 @Table(
   name = "role",
   uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name"})
+        @UniqueConstraint(columnNames = {"name"}, name = "role_name_key")
     }
 )
 @Getter
@@ -30,15 +30,23 @@ public class Role {
   private String name;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "group_name")
   private Group group;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
     name = "role_permission",
     joinColumns = @JoinColumn(name = "role_id"),
-    inverseJoinColumns = @JoinColumn(name = "permission_id")
+    inverseJoinColumns = @JoinColumn(name = "permission_id"),
+    foreignKey = @ForeignKey(name = "role_permission_role_id_fkey"),
+    inverseForeignKey = @ForeignKey(name = "role_permission_permission_id_fkey")
   )
   private Set<Permission> permissions;
+
+  public Role(String name, Group group) {
+    this.name = name;
+    this.group = group;
+  }
 
   public Set<? extends GrantedAuthority> getAuthorities() {
     Set<GrantedAuthority> authorities = new HashSet<>();

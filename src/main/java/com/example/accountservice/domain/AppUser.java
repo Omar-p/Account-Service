@@ -12,7 +12,7 @@ import lombok.Setter;
 @Table(
   name = "app_user",
   uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email"})
+        @UniqueConstraint(columnNames = {"email"}, name = "app_user_email_key")
     }
 )
 public class AppUser {
