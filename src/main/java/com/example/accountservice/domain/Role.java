@@ -41,7 +41,7 @@ public class Role {
     foreignKey = @ForeignKey(name = "role_permission_role_id_fkey"),
     inverseForeignKey = @ForeignKey(name = "role_permission_permission_id_fkey")
   )
-  private Set<Permission> permissions;
+  private Set<Permission> permissions = new HashSet<>();
 
   public Role(String name, Group group) {
     this.name = name;

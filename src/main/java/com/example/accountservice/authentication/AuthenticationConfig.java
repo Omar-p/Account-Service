@@ -24,6 +24,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 @Configuration
+public
 class AuthenticationConfig {
 
   private final RsaKeyProperties rsaKeys;

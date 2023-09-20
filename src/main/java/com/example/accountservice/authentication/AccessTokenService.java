@@ -16,11 +16,11 @@ class AccessTokenService {
 
   private final JwtEncoder encoder;
 
-  public AccessTokenService(JwtEncoder encoder) {
+  AccessTokenService(JwtEncoder encoder) {
     this.encoder = encoder;
   }
 
-  public String generateToken(Authentication authentication) {
+  public String generateAccessToken(Authentication authentication) {
     Instant now = Instant.now();
     String scope = authentication.getAuthorities().stream()
         .map(GrantedAuthority::getAuthority)

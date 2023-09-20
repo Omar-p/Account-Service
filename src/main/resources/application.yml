@@ -1,1 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/account
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+app:
+  breached:
+    passwords: >
+      PasswordForJanuary,
+      PasswordForFebruary,
+      PasswordForMarch,
+      PasswordForApril,
+      PasswordForMay,
+      PasswordForJune,
+      PasswordForJuly,
+      PasswordForAugust,
+      PasswordForSeptember,
+      PasswordForOctober,
+      PasswordForNovember,
+      PasswordForDecember
 

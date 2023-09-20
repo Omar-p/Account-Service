@@ -1,11 +1,16 @@
 package com.example.accountservice.registration;
 
+import com.example.accountservice.authentication.AuthenticationConfig;
 import com.example.accountservice.config.SecurityConfig;
 import com.example.accountservice.exception.BreachedPasswordException;
 import com.example.accountservice.exception.GlobalExceptionHandler;
 import com.example.accountservice.exception.UserAlreadyExistsException;
+import com.example.accountservice.exception.security.DelegatedAuthEntryPoint;
+import com.example.accountservice.repository.UserAppRepository;
+import com.example.accountservice.repository.UserSecurityRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -31,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(RegistrationController.class)
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-@Import({SecurityConfig.class, GlobalExceptionHandler.class})
+@Import({SecurityConfig.class, GlobalExceptionHandler.class, DelegatedAuthEntryPoint.class, AuthenticationConfig.class})
 @MockitoSettings
 class RegistrationControllerTest {
 
@@ -40,6 +45,12 @@ class RegistrationControllerTest {
 
   @MockBean
   RegistrationService registrationService;
+
+  @MockBean
+  UserAppRepository userAppRepository;
+
+  @MockBean
+  UserSecurityRepository userSecurityRepository;
 
   private final String validRequest = """
       {

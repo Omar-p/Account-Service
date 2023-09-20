@@ -1,7 +1,7 @@
 package com.example.accountservice.registration;
 
 import com.example.accountservice.exception.UserAlreadyExistsException;
-import com.example.accountservice.repository.UserRepository;
+import com.example.accountservice.repository.UserAppRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -13,7 +13,7 @@ import static org.mockito.BDDMockito.given;
 class RegistrationServiceTest {
 
   @Mock
-  UserRepository userRepository;
+  UserAppRepository userAppRepository;
 
   @InjectMocks
   RegistrationService registrationService;
@@ -26,7 +26,7 @@ class RegistrationServiceTest {
 
   @Test
   void givenRegistrationRequestWithAlreadyUsedEmailItShouldThrowUserAlreadyExistsException() {
-    given(userRepository.existsByEmail(emailCaptor.capture()))
+    given(userAppRepository.existsByEmail(emailCaptor.capture()))
         .willReturn(true);
 
 
@@ -34,8 +34,8 @@ class RegistrationServiceTest {
         .isInstanceOf(UserAlreadyExistsException.class)
         .hasMessage("User with email " + request.email() + " already exists");
 
-    BDDMockito.then(userRepository).should().existsByEmail(emailCaptor.getValue());
-    BDDMockito.then(userRepository).shouldHaveNoMoreInteractions();
+    BDDMockito.then(userAppRepository).should().existsByEmail(emailCaptor.getValue());
+    BDDMockito.then(userAppRepository).shouldHaveNoMoreInteractions();
   }
 
 

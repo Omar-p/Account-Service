@@ -1,4 +1,4 @@
-# Accounts Service
+= Accounts Service
 
 Registration
 
@@ -33,4 +33,34 @@ include::{snippets}/registration-with-email-from-non-acme-domain/http-request.ad
 
 .response
 include::{snippets}/registration-with-email-from-non-acme-domain/http-response.adoc[]
+
+'''
+Registration With Not well-formatted Email
+
+.request
+include::{snippets}/registration-with-email-from-acme-domain-but-not-valid/http-request.adoc[]
+
+.response
+include::{snippets}/registration-with-email-from-acme-domain-but-not-valid/http-response.adoc[]
+
+'''
+
+Registration With Breached Password
+
+.request
+include::{snippets}/registration-with-breached-password/http-request.adoc[]
+
+.response
+include::{snippets}/registration-with-breached-password/http-response.adoc[]
+
+'''
+
+Registration With Already Existing Email
+
+.request
+include::{snippets}/registration-with-already-existing-email/http-request.adoc[]
+
+.response
+include::{snippets}/registration-with-already-existing-email/http-response.adoc[]
+
 

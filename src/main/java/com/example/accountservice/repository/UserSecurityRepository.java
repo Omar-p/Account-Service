@@ -10,9 +10,12 @@ import java.util.List;
 
 public interface UserSecurityRepository extends JpaRepository<SecurityUser, Long> {
 
-  @Query("select u.roles from SecurityUser u where u.appUser = ?1")
-  List<Role> findRolesByAppUser(AppUser appUser);
+
+  @Query("select r.name from SecurityUser u join u.roles r where u.appUser = ?1")
+  List<String> findRoleNamesByAppUser(AppUser appUser);
 
   SecurityUser findByAppUser(AppUser appUser);
+
+  void deleteByAppUser(AppUser appUser);
 
 }
